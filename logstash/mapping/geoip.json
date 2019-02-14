@@ -1,0 +1,17 @@
+{
+    "template":"nginxlnghistory",
+    "settings":{
+        "index.refresh_interval":"1s"
+    },
+    "mappings":{
+	"geoip" : {
+          "properties" : {
+            "location" : {
+              "type" : "geo_point",
+              "ignore_malformed": "true"  
+            }
+          }
+        }
+    }
+}
+

@@ -1,0 +1,53 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  fields_under_root: true   ##如果有改项，在logstash中匹配时要去掉fields关键字。
+  paths:
+    - /opt/filebeat-6.5.2-linux-x86_64/test
+  document_type: lng1
+  
+  fields:    ##添加的新字段关键字fields
+    type1: lng-nginx1
+  multiline.pattern: 'Start new event'  ##包含了'Start new event'和'End event'的行中间的日志会合并
+  multiline.negate: true
+  multiline.match: after
+  multiline.flush_pattern: 'End event'
+  multiline.timeout： 5s   ##5秒后来的数据不在合并，默认10秒。
+  
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/access1.log
+  document_type: lng1
+  fields:
+    type: nginx-access1
+  tail_files: false
+
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/filebeat-6.5.2-linux-x86_64/test
+  fields:
+    type: elktest
+  tail_files: false
+  multiline.pattern: '^[[:space:]]*(at|\.{3})\b|^Caused by:|Error'
+  multiline.negate: false
+  multiline.match: before
+  multiline.timeout: 0s
+  include_lines: ['耗时']
+
+
+  
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: true
+  
+setup.template.settings:
+  index.number_of_shards: 3
+  
+setup.kibana:
+
+output.logstash:
+  hosts: ["192.168.1.82:5044"]
