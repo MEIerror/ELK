@@ -38,7 +38,15 @@ filebeat.inputs:
   multiline.timeout: 0s
   include_lines: ['耗时']
 
-
+# lng-ia日志收集
+- type: log
+  enabled: true
+  paths:
+    - /root/work/ia-lng-dgb/ia-log/lng2.log
+  fields:
+    type: lng-ia
+  tail_files: true
+  include_lines: ['设备地址']
   
 filebeat.config.modules:
   path: ${path.config}/modules.d/*.yml
